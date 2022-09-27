@@ -4,7 +4,7 @@ import numpy as np
 import sqlite3
 
 # Create connection to database and tables
-conn = sqlite3.connect('project/datadb.sqlite')
+conn = sqlite3.connect('HHB/datadb.sqlite')
 cur = conn.cursor()
 
 # Make tables in the database
@@ -39,7 +39,7 @@ CREATE TABLE I_O (
 # Read data from csv
 haben = 0
 soll = 0
-acc_file = ('project/test_file.csv')
+acc_file = ('HHB/test_file.csv')
 
 fhandle = open(acc_file, 'r')
 csv_reader = csv.reader(fhandle)
