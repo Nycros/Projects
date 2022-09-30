@@ -7,7 +7,7 @@ import sqlite3
 conn = sqlite3.connect('HHB/datadb.sqlite')
 cur = conn.cursor()
 
-# Make tables in the database
+# Create tables in the database
 cur.executescript('''
 DROP TABLE IF EXISTS Accounts;
 DROP TABLE IF EXISTS I_O;
@@ -37,8 +37,6 @@ CREATE TABLE I_O (
 ''')
 
 # Read data from csv
-haben = 0
-soll = 0
 acc_file = ('HHB/test_file.csv')
 
 fhandle = open(acc_file, 'r')
@@ -75,14 +73,6 @@ for count, row in enumerate(csv_reader):
 # print only the sum of the withdrawal of the I_O table
 cur.execute('''SELECT SUM(withdrawal) FROM I_O''')
 print(f'Total Withdrawal {cur.fetchall()}')
-
-
-# print a gaph
-# xpoints = np.array([0, 6])
-# ypoints = np.array([0, 250])
-
-# plt.plot(xpoints, ypoints)
-# plt.show()
 
 conn.commit()
 
