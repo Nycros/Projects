@@ -37,7 +37,7 @@ CREATE TABLE I_O (
 ''')
 
 # Read data from csv
-acc_file = ('HHB/test_file.csv')
+acc_file = ('HHB/Bawag.csv')
 
 fhandle = open(acc_file, 'r')
 csv_reader = csv.reader(fhandle)

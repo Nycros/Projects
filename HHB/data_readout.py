@@ -13,6 +13,8 @@ import csv
     amount  --> float
     currency
 5) write data into database
+
+Is now specialiesed on Bawag files. need to test it also for other banks.
 """
 
 """
@@ -26,9 +28,9 @@ Possible solutions:
 """
 
 # Read data from csv
-acc_file = ('HHB/PSK.csv')
+acc_file = ('HHB/Bawag.csv')
 with open(acc_file, 'r') as fhandle:
-    csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=['account_num', 'text', 'date', 'valutadate', 'amount', 'currency'])
+    csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=['account_num', 'text', 'date', 'valutadate', 'amount', 'currency']) # Adds a fieldname to the columns, so i can access them by name instead of index.
     header = next(csv_reader)
 
     print(type(csv_reader))
