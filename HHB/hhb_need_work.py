@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sqlite3
 
+
+# 1) create tabel in database
+# 2) read data from excel
+# 3) write data into database
+
 # Create connection to database and tables
 conn = sqlite3.connect('HHB/datadb.sqlite')
 cur = conn.cursor()
