@@ -1,22 +1,32 @@
 import csv
 import pandas as pd
+from datetime import datetime
+import hashlib
 
 """
 # needed steps:
 1) add header --> Done
 2) read data --> Done
 3) check if all rows are equal in length --> Done
-4) transform data
+4) transform data --> Done
     account num
     text
     date    --> date
     date    --> date
     amount  --> float
     currency
-5) write data into database
+5) Create hash value --> done
+6) write data into database
+6) read data form folder not only from file
+    https://www.geeksforgeeks.org/how-to-read-multiple-text-files-from-folder-in-python/
 
 Is now specialiesed on Bawag files. need to test it also for other banks.
 """
+# function for createing a hashvalue
+def hash_func(item1, item2, item3, item4):
+    hash_string = str(item1) + str(item2) + str(item3) + str(item4)
+    created_hash = hashlib.md5(hash_string.encode())
+    return created_hash
 
 # Read data from csv
 acc_file = ('HHB/Bawag.csv')
@@ -39,12 +49,15 @@ with open(acc_file, 'r') as fhandle:
         # Definition of data elements
         account_num = row['account_num']
         text = row['text']
-        date = row['date']
-        valutadate = row['valutadate']
+        date = datetime.strptime(row['date'], '%d.%m.%Y')
+        valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
         amount = float(row['amount'].replace('.','').replace(',','.'))
         currency = row['currency']
 
-        # print(f"account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
+        # Create hashvalue of each record, to add a uniqe identifier in the table.
+        hash_val = hash_func(account_num, text, valutadate, amount)
+
+        print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
 
     print(f"Total Rows: {count}")
 
