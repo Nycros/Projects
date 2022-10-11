@@ -1,4 +1,4 @@
-# Get all filesnames in a folder
+# Get all filenames in a folder
 
 import os
 
