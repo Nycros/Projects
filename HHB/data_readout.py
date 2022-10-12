@@ -23,8 +23,9 @@ import os
         What is different form ing to Bawag
     the file is named after the account num. look this account num in the database and get the bank name and start the fucniton based on this.
     write data of bank into a pandas dataframe and then call a function, that writes this dataframe into the database, so we do not need to copy the database write multiple times
-
-6) write data into database 
+8) Create dataframe of data to hand over to a funciton for filling the database
+    open: make dataframes of different banks the same so the function can be the same for all the bank dataframse
+9) write data into database 
     Use INSERT OR IGNORE
     MAybe HAsh value is not neccessary if it is checked all values
 
@@ -43,17 +44,20 @@ def read_bawag(filename):
     # Create header for data in csv
     header = ['account_num', 'text', 'date', 'valutadate', 'amount', 'currency']
 
+    # Create empty pandas dataframe for transporting data to the database
+    bawag_df = pd.DataFrame(columns=header)
+
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
         # header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
         # print(header)
 
         # loop over data and print it
-        for count, row in enumerate(csv_reader):
+        for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
             if len(row) != 6:
-                print(f"Row {count} is only {len(row)} elements long.")
+                print(f"Row {row_index} is only {len(row)} elements long.")
                 break
             
             # Definition of data elements
@@ -67,14 +71,22 @@ def read_bawag(filename):
             # Create hashvalue of each record, to add a uniqe identifier in the table.
             hash_val = hash_func(account_num, text, valutadate, amount)
 
-            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
+            # Write data elements into dataframe as new row (.loc[row_index])
+            bawag_df.loc[row_index] = [account_num, text, date, valutadate, amount, currency]
 
-        print(f"Total Rows: {count + 1}")
+            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
+      
+        print(bawag_df)
+        
+        print(f"Total Rows: {row_index + 1}")
 
 # function for readout ing_diba data
 def read_bank99(filename):
     # Create header for data in csv
     header = ['account_num', 'text', 'valutadate', 'currency', 'amount_withdrawal', 'amount_deposit']
+
+    # Create empty pandas dataframe for transporting data to the database
+    bank99_df = pd.DataFrame(columns=header)
 
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
@@ -82,11 +94,11 @@ def read_bank99(filename):
         # print(header)
 
         # loop over data and print it
-        for count, row in enumerate(csv_reader):
+        for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
             if len(row) != 6:
-                print(f"Row {count} is only {len(row)} elements long.")
+                print(f"Row {row_index} is only {len(row)} elements long.")
                 break
             
             # Definition of data elements
@@ -100,9 +112,14 @@ def read_bank99(filename):
             # Create hashvalue of each record, to add a uniqe identifier in the table.
             hash_val = hash_func(account_num, text, valutadate, amount_withdrawal)
 
-            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; valutadate: {valutadate}; currency: {currency}; amount_withdrawal: {amount_withdrawal}; amount_deposit: {amount_deposit}")
+            # Write data elements into dataframe as new row (.loc[row_index])
+            bank99_df.loc[row_index] = [account_num, text, valutadate, currency, amount_withdrawal, amount_deposit]
 
-        print(f"Total Rows: {count + 1}")
+            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; valutadate: {valutadate}; currency: {currency}; amount_withdrawal: {amount_withdrawal}; amount_deposit: {amount_deposit}")
+        
+        print(bank99_df)
+
+        print(f"Total Rows: {row_index + 1}")
 
 # Main Function
 def main():
