@@ -18,14 +18,16 @@ import os
     currency
 5) Create hash value --> done
 6) read data form folder not only from file --> Done
-7) Is now specialiesed on Bawag files. need to test it also for other banks.
+7) Is now specialiesed on Bawag files. need to test it also for other banks. --> Done for Bawag and Bank 99
     create a function for each bank ( Bawag, Flatex, bank99, Raika, N26)
         What is different form ing to Bawag
     the file is named after the account num. look this account num in the database and get the bank name and start the fucniton based on this.
     write data of bank into a pandas dataframe and then call a function, that writes this dataframe into the database, so we do not need to copy the database write multiple times
-8) Create dataframe of data to hand over to a funciton for filling the database
-    open: make dataframes of different banks the same so the function can be the same for all the bank dataframse
-9) write data into database 
+8) Create dataframe of data to hand over to a function for filling the database --> Done
+9) Match to catagory
+    Categories are in the category sql table.
+    based on this 
+10) write data into database 
     Use INSERT OR IGNORE
     MAybe HAsh value is not neccessary if it is checked all values
 
@@ -45,7 +47,8 @@ def read_bawag(filename):
     header = ['account_num', 'text', 'date', 'valutadate', 'amount', 'currency']
 
     # Create empty pandas dataframe for transporting data to the database
-    bawag_df = pd.DataFrame(columns=header)
+    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
+    bawag_df = pd.DataFrame(columns=head_row)
 
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
@@ -67,12 +70,13 @@ def read_bawag(filename):
             valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
             amount = float(row['amount'].replace('.','').replace(',','.'))
             currency = row['currency']
+            category = text
 
             # Create hashvalue of each record, to add a uniqe identifier in the table.
             hash_val = hash_func(account_num, text, valutadate, amount)
 
             # Write data elements into dataframe as new row (.loc[row_index])
-            bawag_df.loc[row_index] = [account_num, text, date, valutadate, amount, currency]
+            bawag_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
 
             # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
       
@@ -80,13 +84,14 @@ def read_bawag(filename):
         
         print(f"Total Rows: {row_index + 1}")
 
-# function for readout ing_diba data
+# function for readout ing_diba/Bank99 data
 def read_bank99(filename):
     # Create header for data in csv
     header = ['account_num', 'text', 'valutadate', 'currency', 'amount_withdrawal', 'amount_deposit']
 
     # Create empty pandas dataframe for transporting data to the database
-    bank99_df = pd.DataFrame(columns=header)
+    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
+    bank99_df = pd.DataFrame(columns=head_row)
 
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
@@ -108,12 +113,14 @@ def read_bank99(filename):
             currency = row['currency']
             amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
             amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
+            amount = amount_deposit - amount_withdrawal
+            category = text
 
             # Create hashvalue of each record, to add a uniqe identifier in the table.
-            hash_val = hash_func(account_num, text, valutadate, amount_withdrawal)
+            hash_val = hash_func(account_num, text, valutadate, amount)
 
             # Write data elements into dataframe as new row (.loc[row_index])
-            bank99_df.loc[row_index] = [account_num, text, valutadate, currency, amount_withdrawal, amount_deposit]
+            bank99_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
 
             # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; valutadate: {valutadate}; currency: {currency}; amount_withdrawal: {amount_withdrawal}; amount_deposit: {amount_deposit}")
         
