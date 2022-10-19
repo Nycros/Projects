@@ -1,3 +1,5 @@
+# Is a support file for creating the databases
+
 import sqlite3
 
 # Explaination on tables:
@@ -11,6 +13,7 @@ TABLE Category_In_Out: lists all the possible categories
 TABLE Accounts: lists all the accounts
 TABLE Transaction_Text: lists all the transaction texts
 TABLE Transactions: list all transactions
+TABLE Categories_Match: list all searchwords to match the category
 """
 
 # Create connection to database and tables
@@ -25,6 +28,7 @@ DROP TABLE IF EXISTS Asset_Class;
 DROP TABLE IF EXISTS Internal_or_External;
 DROP TABLE IF EXISTS I_O;
 DROP TABLE IF EXISTS Category_In_Out;
+DROP TABLE IF EXISTS Categories_Match;
 DROP TABLE IF EXISTS Accounts;
 DROP TABLE IF EXISTS Transaction_Text;
 DROP TABLE IF EXISTS Transactions;
@@ -59,6 +63,12 @@ CREATE TABLE Category_In_Out (
     name TEXT UNIQUE,
     i_o_id INTEGER,
     asset_class_id INTEGER
+);
+
+CREATE TABLE Categories_Match (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    name TEXT UNIQUE,
+    category_in_out_id INTEGER
 );
 
 CREATE TABLE Accounts (

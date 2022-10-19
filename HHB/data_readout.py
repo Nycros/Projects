@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import hashlib
 import os
+import match_category as match_c
 
 """
 # needed steps:
@@ -24,12 +25,16 @@ import os
     the file is named after the account num. look this account num in the database and get the bank name and start the fucniton based on this.
     write data of bank into a pandas dataframe and then call a function, that writes this dataframe into the database, so we do not need to copy the database write multiple times
 8) Create dataframe of data to hand over to a function for filling the database --> Done
-9) Match to catagory
-    Categories are in the category sql table.
-    based on this 
-10) write data into database 
+9) Match to category --> Done
+    Categories are in the Categories_Match sql table.
+    take the text of the account statement
+    take the each name in the Categories_Match tabel and check if it is to find in the text
+    return the matching category_id
+10) Create a count to check for "None" Categories
+11) write data into database 
     Use INSERT OR IGNORE
     MAybe HAsh value is not neccessary if it is checked all values
+12) Crate a early break, if the data is already in the database best before category match!!!!
 
 """
 
@@ -50,12 +55,13 @@ def read_bawag(filename):
     head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
     bawag_df = pd.DataFrame(columns=head_row)
 
+    # Processes data from file
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
         # header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
         # print(header)
 
-        # loop over data and print it
+        # loop over data and write into dataframe
         for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
@@ -70,10 +76,10 @@ def read_bawag(filename):
             valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
             amount = float(row['amount'].replace('.','').replace(',','.'))
             currency = row['currency']
-            category = text
+            category = match_c.match_category(text)
 
             # Create hashvalue of each record, to add a uniqe identifier in the table.
-            hash_val = hash_func(account_num, text, valutadate, amount)
+            # hash_val = hash_func(account_num, text, valutadate, amount)
 
             # Write data elements into dataframe as new row (.loc[row_index])
             bawag_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
@@ -93,12 +99,13 @@ def read_bank99(filename):
     head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
     bank99_df = pd.DataFrame(columns=head_row)
 
+    # Processes data from file
     with open(filename, 'r') as fhandle:
         csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
         header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
         # print(header)
 
-        # loop over data and print it
+        # loop over data and write into dataframe
         for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
@@ -114,10 +121,10 @@ def read_bank99(filename):
             amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
             amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
             amount = amount_deposit - amount_withdrawal
-            category = text
+            category = match_c.match_category(text)
 
             # Create hashvalue of each record, to add a uniqe identifier in the table.
-            hash_val = hash_func(account_num, text, valutadate, amount)
+            # hash_val = hash_func(account_num, text, valutadate, amount)
 
             # Write data elements into dataframe as new row (.loc[row_index])
             bank99_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
