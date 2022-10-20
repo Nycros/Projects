@@ -1,8 +1,8 @@
 import csv
+import dataclasses
 import pandas as pd
 from datetime import datetime
 import hashlib
-import os
 import match_category as match_c
 
 """
@@ -24,6 +24,9 @@ import match_category as match_c
         What is different form ing to Bawag
     the file is named after the account num. look this account num in the database and get the bank name and start the fucniton based on this.
     write data of bank into a pandas dataframe and then call a function, that writes this dataframe into the database, so we do not need to copy the database write multiple times
+
+    Maybe the best approach is, to make all csv files the same and then send to a function to process the data.
+
 8) Create dataframe of data to hand over to a function for filling the database --> Done
 9) Match to category --> Done
     Categories are in the Categories_Match sql table.
@@ -38,164 +41,79 @@ import match_category as match_c
 
 """
 
-
 # function for createing a hashvalue
 def hash_func(item1, item2, item3, item4):
     hash_string = str(item1) + str(item2) + str(item3) + str(item4)
     created_hash = hashlib.md5(hash_string.encode())
     return created_hash
 
+# function for readout file data
+def read_file(filename):
 
-# function for readout bawag data
-def read_bawag(filename):
+    bawag = False
+    bank99 = False
+    flatex = False
+    raika = False
+    n26 = False
+
     # Create header for data in csv
-    header = ['account_num', 'text', 'date', 'valutadate', 'amount', 'currency']
-
-    # Create empty pandas dataframe for transporting data to the database
-    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
-    bawag_df = pd.DataFrame(columns=head_row)
-
-    # Processes data from file
-    with open(filename, 'r') as fhandle:
-        csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
-        # header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
-        # print(header)
-
-        # loop over data and write into dataframe
-        for row_index, row in enumerate(csv_reader):
-
-            # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
-            if len(row) != 6:
-                print(f"Row {row_index} is only {len(row)} elements long.")
-                break
-            
-            # Definition of data elements
-            account_num = row['account_num']
-            text = row['text']
-            date = datetime.strptime(row['date'], '%d.%m.%Y')
-            valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
-            amount = float(row['amount'].replace('.','').replace(',','.'))
-            currency = row['currency']
-            category = match_c.match_category(text)
-
-            # Create hashvalue of each record, to add a uniqe identifier in the table.
-            # hash_val = hash_func(account_num, text, valutadate, amount)
-
-            # Write data elements into dataframe as new row (.loc[row_index])
-            bawag_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
-
-            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
-      
-        print(bawag_df)
-        
-        print(f"Total Rows: {row_index + 1}")
-
-# function for readout ing_diba/Bank99 data
-def read_bank99(filename):
-    # Create header for data in csv
-    header = ['account_num', 'text', 'valutadate', 'currency', 'amount_withdrawal', 'amount_deposit']
-
-    # Create empty pandas dataframe for transporting data to the database
-    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
-    bank99_df = pd.DataFrame(columns=head_row)
-
-    # Processes data from file
-    with open(filename, 'r') as fhandle:
-        csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
-        header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
-        # print(header)
-
-        # loop over data and write into dataframe
-        for row_index, row in enumerate(csv_reader):
-
-            # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
-            if len(row) != 6:
-                print(f"Row {row_index} is only {len(row)} elements long.")
-                break
-            
-            # Definition of data elements
-            account_num = row['account_num']
-            text = row['text']
-            valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
-            currency = row['currency']
-            amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
-            amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
-            amount = amount_deposit - amount_withdrawal
-            category = match_c.match_category(text)
-
-            # Create hashvalue of each record, to add a uniqe identifier in the table.
-            # hash_val = hash_func(account_num, text, valutadate, amount)
-
-            # Write data elements into dataframe as new row (.loc[row_index])
-            bank99_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
-
-            # print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; valutadate: {valutadate}; currency: {currency}; amount_withdrawal: {amount_withdrawal}; amount_deposit: {amount_deposit}")
-        
-        print(bank99_df)
-
-        print(f"Total Rows: {row_index + 1}")
-
-# Main Function
-def main():
-    # create a list of files in the folder
-    folder = "HHB/Bank_statements"
-    all_files = os.listdir(folder)
-
-
-    # Read data from all csv fiels one after another
-    for file in all_files:
-        if file.endswith(".csv") and file.startswith("Bawag"):
-            # Concatenating the file name with the folder
-            acc_file = folder + "/" + file
-            read_bawag(acc_file)
-
-        elif file.endswith(".csv") and file.startswith("bank99"):
-            # Concatenating the file name with the folder
-            acc_file = folder + "/" + file
-            read_bank99(acc_file)
-
-# Run the main function
-if __name__ == '__main__':
-    main()
-
-
-
-
-
-
-
-
-
-"""
-# backup for file readout
-        # Create header for data in csv
+    if "Bawag" in filename:
+        bawag = True
         header = ['account_num', 'text', 'date', 'valutadate', 'amount', 'currency']
+    elif "bank99" in filename:
+        bank99 = True
+        header = ['account_num', 'text', 'valutadate', 'currency', 'amount_withdrawal', 'amount_deposit']
 
-        with open(acc_file, 'r') as fhandle:
-            csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
-            # header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
-            # print(header)
+    # Create empty pandas dataframe for transporting data to the database
+    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
+    bank_account_df = pd.DataFrame(columns=head_row)
 
-            # loop over data and print it
-            for count, row in enumerate(csv_reader):
+    # Processes data from file
+    with open(filename, 'r') as fhandle:
+        csv_reader = csv.DictReader(fhandle, delimiter=';', fieldnames=header) # Adds a fieldname to the columns, so i can access them by name instead of index.
 
-                # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
-                if len(row) != 6:
-                    print(f"Row {count} is only {len(row)} elements long.")
-                    break
-                
-                # Definition of data elements
-                account_num = row['account_num']
-                text = row['text']
-                date = datetime.strptime(row['date'], '%d.%m.%Y')
-                valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
+        if bank99: # Done at bank99 as there is a file header with strings in the csv
+            header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
+
+        # loop over data and write into dataframe
+        none_count = 0
+        for row_index, row in enumerate(csv_reader):
+
+            # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
+            if len(row) != 6:
+                return (f"Row {row_index} is only {len(row)} elements long.")
+                break
+            
+            # Definition of data elements
+            account_num = row['account_num']
+
+            text = row['text']
+
+            valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
+
+            if bawag:
                 amount = float(row['amount'].replace('.','').replace(',','.'))
-                currency = row['currency']
+            elif bank99:
+                amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
+                amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
+                amount = amount_deposit - amount_withdrawal
 
-                # Create hashvalue of each record, to add a uniqe identifier in the table.
-                hash_val = hash_func(account_num, text, valutadate, amount)
+            currency = row['currency']
+                
+            category = match_c.match_category(text)
 
-                print(f"hash: {hash_val.hexdigest()}; account_num: {account_num}; text: {text}; date: {date}; valutadate: {valutadate}; amount: {amount}; currency: {currency}")
+            # Check for None category
+            if category is None:
+                none_count += 1
 
-            print(f"Total Rows: {count + 1}")
-"""
+            # Create hashvalue of each record, to add a uniqe identifier in the table.
+            # hash_val = hash_func(account_num, text, valutadate, amount)
+
+            # Write data elements into dataframe as new row (.loc[row_index])
+            bank_account_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
+
+        # print(bank_account_df)    # Printout for debug
+        # print(f"Total Rows: {row_index + 1}") # Printout for debug
+    
+    return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count}")
+    # return (f"Total Rows: {row_index + 1}")

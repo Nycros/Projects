@@ -2,8 +2,6 @@
 
 import sqlite3
 
-# account_text = "Bezahlung Karte                              MC/000003722|POS          2322  K003 20.09. 14:56|BILLA DANKT\\WIESELBURG\3250"
-
 def match_category(text):
     # Create connection to database and tables
     conn = sqlite3.connect('HHB/datadb.sqlite')
