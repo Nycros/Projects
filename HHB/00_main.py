@@ -7,6 +7,14 @@ import data_readout as dr
 # 03_write_database
 
 
+"""
+# To Do
+1) finish data readout
+2) finish supp_fill_database_tables.py
+3) create and finish delete none supporting database
+4) finish write database
+5) Create basic bar chart per category
+"""
 # Main Function
 def main():
     # create a list of files in the folder
