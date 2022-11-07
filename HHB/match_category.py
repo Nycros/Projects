@@ -4,7 +4,7 @@ import sqlite3
 
 def match_category(text):
     # Create connection to database and tables
-    conn = sqlite3.connect('HHB/datadb.sqlite')
+    conn = sqlite3.connect('HHB/Database/datadb.sqlite')
     cur = conn.cursor()
 
     # select all elements in name column

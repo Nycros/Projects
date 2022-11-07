@@ -7,18 +7,7 @@ import match_category as match_c
 
 """
 # needed steps:
-1) add header --> Done
-2) read data --> Done
-3) check if all rows are equal in length --> Done
-4) transform data --> Done
-    account num
-    text
-    date    --> date
-    date    --> date
-    amount  --> float
-    currency
-5) Create hash value --> done
-6) read data form folder not only from file --> Done
+
 7) Is now specialiesed on Bawag files. need to test it also for other banks. --> Done for Bawag and Bank 99
     create a function for each bank ( Bawag, Flatex, bank99, Raika, N26)
         What is different form ing to Bawag
@@ -27,16 +16,6 @@ import match_category as match_c
 
     Maybe the best approach is, to make all csv files the same and then send to a function to process the data.
 
-8) Create dataframe of data to hand over to a function for filling the database --> Done
-9) Match to category --> Done
-    Categories are in the Categories_Match sql table.
-    take the text of the account statement
-    take the each name in the Categories_Match tabel and check if it is to find in the text
-    return the matching category_id
-10) Create a count to check for "None" Categories
-11) write data into database 
-    Use INSERT OR IGNORE
-    MAybe HAsh value is not neccessary if it is checked all values
 12) Crate a early break, if the data is already in the database best before category match!!!!
 
 """
@@ -76,7 +55,6 @@ def read_file(filename):
             header = next(csv_reader) # Attention, if we use this line, we define the first row in the csv file as header and don´t read it.
 
         # loop over data and write into dataframe
-        none_count = 0
         for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
@@ -102,10 +80,6 @@ def read_file(filename):
                 
             category = match_c.match_category(text)
 
-            # Check for None category
-            if category is None:
-                none_count += 1
-
             # Create hashvalue of each record, to add a uniqe identifier in the table.
             # hash_val = hash_func(account_num, text, valutadate, amount)
 
@@ -114,6 +88,9 @@ def read_file(filename):
 
         # print(bank_account_df)    # Printout for debug
         # print(f"Total Rows: {row_index + 1}") # Printout for debug
+
+    # Check for None category
+    none_count_new = bank_account_df["category"].isnull().sum()
     
-    return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count}")
+    return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count_new}")
     # return (f"Total Rows: {row_index + 1}")

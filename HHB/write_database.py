@@ -42,7 +42,7 @@ CREATE TABLE I_O (
 ''')
 
 # Read data from csv
-acc_file = ('HHB/Bawag.csv')
+acc_file = ('HHB/Database/Bawag.csv')
 
 fhandle = open(acc_file, 'r')
 csv_reader = csv.reader(fhandle)

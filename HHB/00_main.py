@@ -17,7 +17,7 @@ import data_readout as dr
 """
 # Main Function
 def main():
-    # create a list of files in the folder
+    # create a list of files in the folder for csv Readout
     folder = "HHB/Bank_statements"
     all_files = os.listdir(folder)
 

@@ -17,7 +17,7 @@ TABLE Categories_Match: list all searchwords to match the category
 """
 
 # Create connection to database and tables
-conn = sqlite3.connect('HHB/datadb.sqlite')
+conn = sqlite3.connect('HHB/Database/datadb.sqlite')
 cur = conn.cursor()
 
 # Create tables in the database
