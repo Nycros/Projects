@@ -7,7 +7,7 @@ import sqlite3
 TABLE Banks: list all the banks by name
 TABLE Currency: list differen currencies by name
 TABLE Asset_Class:lists all the asset classes by Name
-TABLE Internal_or_External: a table if the expense is internal (to a account from Banks) or if it is an external to someoneelses expense
+TABLE Internal_or_External: a table if the expense is internal (to a account from Banks) or if it is an external to someone elses expense
 TABLE I_O: a list if the amoutn is in or otgoing
 TABLE Category_In_Out: lists all the possible categories
 TABLE Accounts: lists all the accounts
@@ -22,14 +22,14 @@ cur = conn.cursor()
 
 # Create tables in the database
 cur.executescript('''
-DROP TABLE IF EXISTS Banks;
-DROP TABLE IF EXISTS Currency;
-DROP TABLE IF EXISTS Asset_Class;
-DROP TABLE IF EXISTS Internal_or_External;
-DROP TABLE IF EXISTS I_O;
-DROP TABLE IF EXISTS Category_In_Out;
+DROP TABLE IF EXISTS Banks_Supp;
+DROP TABLE IF EXISTS Currency_Supp;
+DROP TABLE IF EXISTS Asset_Class_Supp;
+DROP TABLE IF EXISTS Internal_or_External_Supp;
+DROP TABLE IF EXISTS I_O_Supp;
+DROP TABLE IF EXISTS Category_In_Out_Supp;
 DROP TABLE IF EXISTS Categories_Match;
-DROP TABLE IF EXISTS Accounts;
+DROP TABLE IF EXISTS Accounts_Supp;
 DROP TABLE IF EXISTS Transaction_Text;
 DROP TABLE IF EXISTS Transactions;
 
