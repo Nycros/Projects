@@ -10,8 +10,9 @@ import data_readout as dr
 """
 # To Do
 1) finish data readout
-2) finish supp_fill_database_tables.py
-3) create and finish delete none supporting database ( All tables, that have data from csv files in them)
+2) Done: finish supp_fill_database_tables.py
+3) Done: create and finish delete none supporting database
+4) finish fill catagories match program
 4) finish write database
 5) Create basic bar chart per category
 """

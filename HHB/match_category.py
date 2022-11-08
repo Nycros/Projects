@@ -15,10 +15,14 @@ def match_category(text):
 
     # print(all_cat)    # Printout for debug
 
+    # if there are no catagories
+    if not all_cat:
+        return None
+    
     # Readout the category which matches the text
     for category in all_cat:
         # print(category[0])    # Print each row of the selected column
-        if category[0] in text:
+        if category[0].lower() in text.lower():
             cur.execute("SELECT category_in_out_id FROM Categories_Match WHERE name = ?", category)
             cat_id = cur.fetchone()[0]
             # correct_cat = category[0]
