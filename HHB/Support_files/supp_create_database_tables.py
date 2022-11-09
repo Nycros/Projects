@@ -88,7 +88,7 @@ if __name__ == "__main__":
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         hash INTEGER,
         valutadate DATE,
-        amount INTEGER,
+        amount FLOAT,
         transaction_text_id INTEGER,
         account_id INTEGER,
         asset_class_id INTEGER,

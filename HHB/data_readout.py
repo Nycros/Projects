@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import hashlib
 import match_category as match_c
+import sqlite3
 
 """
 # needed steps:
@@ -26,7 +27,11 @@ def hash_func(item1, item2, item3, item4):
     return created_hash
 
 # function for readout file data
-def create_dataframe(filename):
+def create_dataframe(filename):#
+
+    # Create connection to database and tables
+    conn = sqlite3.connect('HHB/Database/datadb.sqlite')
+    cur = conn.cursor()
 
     bawag = False
     bank99 = False
@@ -43,7 +48,8 @@ def create_dataframe(filename):
         header = ['account_num', 'text', 'valutadate', 'currency', 'amount_withdrawal', 'amount_deposit']
 
     # Create empty pandas dataframe for transporting data to the database
-    head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
+    # head_row = ['account_num', 'text', 'valutadate', 'amount', 'currency', 'category']
+    head_row = ['hash', 'valutadate', 'amount', 'transaction_text_id', 'account_id', 'asset_class_id', 'category_in_out_id', 'currency_id', 'int_or_ext_id', 'remarks']
     bank_account_df = pd.DataFrame(columns=head_row)
 
     # Processes data from file
@@ -62,34 +68,40 @@ def create_dataframe(filename):
                 break
             
             # Definition of data elements
-            account_num = row['account_num']
 
-            text = row['text']
-
+            # Create hashvalue of each record, to add a uniqe identifier in the table.
+            # hash_val = hash_func(account_num, text, valutadate, amount)
+            hash = None
             valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
-
             if bawag:
                 amount = float(row['amount'].replace('.','').replace(',','.'))
             elif bank99:
                 amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
                 amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
                 amount = amount_deposit - amount_withdrawal
-
-            currency = row['currency']
-                
+            text = row['text']
+            transaction_text_id = cur.execute('''SELECT id FROM Transaction_Text WHERE transaction_text = ?''', (text, ))
+            account_num = row['account_num']
+            account_id = cur.execute('''SELECT id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
+            asset_class_id = cur.execute('''SELECT asset_class_id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
             category = match_c.match_category(text)
-
-            # Create hashvalue of each record, to add a uniqe identifier in the table.
-            # hash_val = hash_func(account_num, text, valutadate, amount)
+            category_in_out_id = cur.execute('''SELECT id FROM Category_In_Out_Supp WHERE name = ?''', (category, ))
+            currency = row['currency']
+            currency_id = cur.execute('''SELECT id FROM Currency_Supp WHERE name = ?''', (currency, ))
+            int_or_ext_id = None
+            remarks = None
+                        
 
             # Write data elements into dataframe as new row (.loc[row_index])
-            bank_account_df.loc[row_index] = [account_num, text, valutadate, amount, currency, category]
+            bank_account_df.loc[row_index] = [hash, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks]
 
         # print(bank_account_df)    # Printout for debug
         # print(f"Total Rows: {row_index + 1}") # Printout for debug
 
     # Check for None category
-    none_count_new = bank_account_df["category"].isnull().sum()
+    none_count_new = bank_account_df["category_in_out_id"].isnull().sum()
+
+    conn.commit()
     
     # Return the dataframe
     return bank_account_df

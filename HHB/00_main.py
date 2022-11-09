@@ -5,6 +5,7 @@ import write_database as wd
 """
 # To Do
 1) finish data readout
+    try if i can hand over the sql connection
 2) Done: finish supp_fill_database_tables.py
 3) Done: create and finish delete none supporting database
 4) Done: finish fill catagories match program
