@@ -22,7 +22,7 @@ if __name__ == '__main__':
     cat_match = input("Choose a catagory from above by entering the number\n")
 
     cur.execute('''INSERT OR IGNORE INTO Categories_Match (name, category_in_out_id)
-        VALUES (?, ?)''', (cat_match_word, cat_match) )
+        VALUES (?, ?)''', (cat_match_word.upper(), cat_match) )
 
 
     conn.commit()

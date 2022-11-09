@@ -1,19 +1,16 @@
 import os
 
-import data_readout as dr
-
-# 01_data_readout
-# 02_match_category
-# 03_write_database
-
+import write_database as wd
 
 """
 # To Do
 1) finish data readout
 2) Done: finish supp_fill_database_tables.py
 3) Done: create and finish delete none supporting database
-4) finish fill catagories match program
+4) Done: finish fill catagories match program
 4) finish write database
+    try if i can hand over the sql connection
+    MAybe remove hash column
 5) Create basic bar chart per category
 """
 # Main Function
@@ -26,7 +23,7 @@ def main():
     for file in all_files:
         # Concatenating the file name with the folder
         acc_file = folder + "/" + file
-        print(dr.read_file(acc_file))
+        wd.write_datab(acc_file)
 
 # Run the main function
 if __name__ == '__main__':

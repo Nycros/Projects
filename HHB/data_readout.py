@@ -1,5 +1,4 @@
 import csv
-import dataclasses
 import pandas as pd
 from datetime import datetime
 import hashlib
@@ -27,7 +26,7 @@ def hash_func(item1, item2, item3, item4):
     return created_hash
 
 # function for readout file data
-def read_file(filename):
+def create_dataframe(filename):
 
     bawag = False
     bank99 = False
@@ -92,5 +91,7 @@ def read_file(filename):
     # Check for None category
     none_count_new = bank_account_df["category"].isnull().sum()
     
-    return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count_new}")
-    # return (f"Total Rows: {row_index + 1}")
+    # Return the dataframe
+    return bank_account_df
+    # return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count_new}") # Printout for debug
+    # return (f"Total Rows: {row_index + 1}")   # Printout for debug
