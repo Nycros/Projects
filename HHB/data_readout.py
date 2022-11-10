@@ -27,11 +27,7 @@ def hash_func(item1, item2, item3, item4):
     return created_hash
 
 # function for readout file data
-def create_dataframe(filename):#
-
-    # Create connection to database and tables
-    conn = sqlite3.connect('HHB/Database/datadb.sqlite')
-    cur = conn.cursor()
+def create_dataframe(filename, conn, cur):
 
     bawag = False
     bank99 = False
@@ -72,26 +68,49 @@ def create_dataframe(filename):#
             # Create hashvalue of each record, to add a uniqe identifier in the table.
             # hash_val = hash_func(account_num, text, valutadate, amount)
             hash = None
+
             valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
+
             if bawag:
                 amount = float(row['amount'].replace('.','').replace(',','.'))
             elif bank99:
                 amount_withdrawal = float(row['amount_withdrawal'].replace('.','').replace(',','.'))
                 amount_deposit = float(row['amount_deposit'].replace('.','').replace(',','.'))
                 amount = amount_deposit - amount_withdrawal
+
             text = row['text']
-            transaction_text_id = cur.execute('''SELECT id FROM Transaction_Text WHERE transaction_text = ?''', (text, ))
+            cur.execute('''SELECT id FROM Transaction_Text WHERE transaction_text = ?''', (text, ))
+            try:
+                transaction_text_id = cur.fetchone()[0]
+            except TypeError:
+                transaction_text_id = cur.fetchone()
+                
             account_num = row['account_num']
-            account_id = cur.execute('''SELECT id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
-            asset_class_id = cur.execute('''SELECT asset_class_id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
-            category = match_c.match_category(text)
-            category_in_out_id = cur.execute('''SELECT id FROM Category_In_Out_Supp WHERE name = ?''', (category, ))
+            cur.execute('''SELECT id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
+            try:
+                account_id = cur.fetchone()[0]
+            except TypeError:
+                account_id = cur.fetchone()
+
+            cur.execute('''SELECT asset_class_id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
+            try:
+                asset_class_id = cur.fetchone()[0]
+            except TypeError:
+                asset_class_id = cur.fetchone()
+
+            category_in_out_id = match_c.match_category(text, conn, cur)
+
             currency = row['currency']
-            currency_id = cur.execute('''SELECT id FROM Currency_Supp WHERE name = ?''', (currency, ))
+            cur.execute('''SELECT id FROM Currency_Supp WHERE name = ?''', (currency, ))
+            try:
+                currency_id = cur.fetchone()[0]
+            except TypeError:
+                currency_id = cur.fetchone()
+
             int_or_ext_id = None
+
             remarks = None
                         
-
             # Write data elements into dataframe as new row (.loc[row_index])
             bank_account_df.loc[row_index] = [hash, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks]
 
@@ -100,9 +119,7 @@ def create_dataframe(filename):#
 
     # Check for None category
     none_count_new = bank_account_df["category_in_out_id"].isnull().sum()
-
-    conn.commit()
-    
+   
     # Return the dataframe
     return bank_account_df
     # return (f"{bank_account_df} \n Total Rows: {row_index + 1} \n None Categories: {none_count_new}") # Printout for debug

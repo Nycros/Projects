@@ -2,10 +2,7 @@
 
 import sqlite3
 
-def match_category(text):
-    # Create connection to database and tables
-    conn = sqlite3.connect('HHB/Database/datadb.sqlite')
-    cur = conn.cursor()
+def match_category(text, conn, cur):
 
     # select all elements in name column
     cur.execute("SELECT name FROM Categories_Match")
@@ -20,13 +17,13 @@ def match_category(text):
         return None
     
     # Readout the category which matches the text
-    for category in all_cat:
-        # print(category[0])    # Print each row of the selected column
-        if category[0].lower() in text.lower():
-            cur.execute("SELECT category_in_out_id FROM Categories_Match WHERE name = ?", category)
+    for search_val in all_cat:
+        # print(search_val[0])    # Print each row of the selected column
+        if search_val[0].lower() in text.lower():
+            cur.execute("SELECT category_in_out_id FROM Categories_Match WHERE name = ?", search_val)
             cat_id = cur.fetchone()[0]
-            # correct_cat = category[0]
-            # print(f"Category: {category[0]}; ID: {id}")   # Printout for debug
+            # correct_cat = search_val[0]
+            # print(f"Category: {search_val[0]}; ID: {id}")   # Printout for debug
             break
         else:
             cat_id = None
