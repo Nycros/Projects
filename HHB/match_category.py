@@ -15,6 +15,21 @@ def match_category(text, conn, cur):
     # if there are no catagories
     if not all_cat:
         return None
+
+    """
+    words = text.split()
+
+    for word in words:
+        if word.lower() in all_cat.lower():
+            cur.execute("SELECT category_in_out_id FROM Categories_Match WHERE name = ?", word)
+            cat_id = cur.fetchone()[0]
+            # correct_cat = search_val[0]
+            # print(f"Category: {search_val[0]}; ID: {id}")   # Printout for debug
+            break
+        else:
+            cat_id = None
+            # correct_cat = None
+    """
     
     # Readout the category which matches the text
     for search_val in all_cat:

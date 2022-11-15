@@ -79,11 +79,9 @@ def create_dataframe(filename, conn, cur):
                 amount = amount_deposit - amount_withdrawal
 
             text = row['text']
+            cur.execute('''INSERT OR IGNORE INTO Transaction_Text (transaction_text) VALUES (?)''', (text, ))
             cur.execute('''SELECT id FROM Transaction_Text WHERE transaction_text = ?''', (text, ))
-            try:
-                transaction_text_id = cur.fetchone()[0]
-            except TypeError:
-                transaction_text_id = cur.fetchone()
+            transaction_text_id = cur.fetchone()[0]
                 
             account_num = row['account_num']
             cur.execute('''SELECT id FROM Accounts_Supp WHERE account_number = ?''', (account_num, ))
