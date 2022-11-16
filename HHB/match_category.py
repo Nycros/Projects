@@ -17,6 +17,7 @@ def match_category(text, conn, cur):
         return None
 
     """
+    iterate over words of transcation text and check if it exists in all categories
     words = text.split()
 
     for word in words:

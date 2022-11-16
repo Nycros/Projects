@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     CREATE TABLE Transactions (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        hash INTEGER,
+        hash Text,
         valutadate DATE,
         amount FLOAT,
         transaction_text_id INTEGER,

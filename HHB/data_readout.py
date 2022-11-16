@@ -23,7 +23,7 @@ import sqlite3
 # function for createing a hashvalue
 def hash_func(item1, item2, item3, item4):
     hash_string = str(item1) + str(item2) + str(item3) + str(item4)
-    created_hash = hashlib.md5(hash_string.encode())
+    created_hash = hashlib.md5(hash_string.encode()).hexdigest()
     return created_hash
 
 # function for readout file data
@@ -59,15 +59,11 @@ def create_dataframe(filename, conn, cur):
         for row_index, row in enumerate(csv_reader):
 
             # Safety check if all rows are equal in lenght, otherwise there could be some problem with the transformation of the data.
-            if len(row) != 6:
-                return (f"Row {row_index} is only {len(row)} elements long.")
-                break
+            # if len(row) != 6:
+            #     return (f"Row {row_index} is only {len(row)} elements long.")
+            #     break
             
             # Definition of data elements
-
-            # Create hashvalue of each record, to add a uniqe identifier in the table.
-            # hash_val = hash_func(account_num, text, valutadate, amount)
-            hash = None
 
             valutadate = datetime.strptime(row['valutadate'], '%d.%m.%Y')
 
@@ -108,9 +104,14 @@ def create_dataframe(filename, conn, cur):
             int_or_ext_id = None
 
             remarks = None
+
+            # Create hashvalue of each record, to add a uniqe identifier in the table.
+            # hash_val = hash_func(account_num, text, valutadate, amount)
+            # print(f"Debug: {type(hash_val)}") # Printout for debug
+            hash_val = None
                         
             # Write data elements into dataframe as new row (.loc[row_index])
-            bank_account_df.loc[row_index] = [hash, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks]
+            bank_account_df.loc[row_index] = [hash_val, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks]
 
         # print(bank_account_df)    # Printout for debug
         # print(f"Total Rows: {row_index + 1}") # Printout for debug
