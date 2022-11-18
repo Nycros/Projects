@@ -106,9 +106,9 @@ def create_dataframe(filename, conn, cur):
             remarks = None
 
             # Create hashvalue of each record, to add a uniqe identifier in the table.
-            # hash_val = hash_func(account_num, text, valutadate, amount)
+            hash_val = hash_func(account_num, text, valutadate, amount)
             # print(f"Debug: {type(hash_val)}") # Printout for debug
-            hash_val = None
+            # hash_val = None
                         
             # Write data elements into dataframe as new row (.loc[row_index])
             bank_account_df.loc[row_index] = [hash_val, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks]

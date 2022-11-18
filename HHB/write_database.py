@@ -34,14 +34,19 @@ def write_datab(file, conn, cur):
     # Transmit from the temporary tabel to the final tabel
     cur.execute("INSERT OR IGNORE INTO Transactions SELECT * FROM myTempTable")
     """
+
     
-
-    # Something seems wrong with the datatypes of the row readout of the dataframe
-
+    # Write into Database with a for loop
     # Get the dataframe
     data_frame = dr.create_dataframe(file, conn, cur)
 
     for index, row in data_frame.iterrows():
-        print(type(row['amount']))
-        cur.execute("INSERT OR IGNORE INTO Transactions (hash, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-        (row['hash'], row['valutadate'], row['amount'], row['transaction_text_id'], row['account_id'], row['asset_class_id'], row['category_in_out_id'], row['currency_id'], row['int_or_ext_id'], row['remarks']))
+        cur.execute('''
+                    INSERT OR IGNORE INTO
+                    Transactions
+                    (hash, valutadate, amount, transaction_text_id, account_id, asset_class_id, category_in_out_id, currency_id, int_or_ext_id, remarks)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', 
+                    (str(row['hash']), str(row['valutadate']), row['amount'],
+                    row['transaction_text_id'], row['account_id'], row['asset_class_id'],
+                    row['category_in_out_id'], row['currency_id'], row['int_or_ext_id'], row['remarks']))    

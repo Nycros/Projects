@@ -10,8 +10,11 @@ import write_database as wd
 3) Done: create and finish delete none supporting database
 4) Done: finish fill catagories match program
 4) Done: finish write database
-5) Coplete write database to update the database and not append everything
+5) Done: Coplete write database to update the database and not append everything
 5) Create basic bar chart per category
+    create code to read data into dataframe
+    analyse it
+    create bar chart for visualization
 """
 # Main Function
 def main():

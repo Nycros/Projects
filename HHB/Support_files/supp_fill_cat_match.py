@@ -1,11 +1,5 @@
 # Let you fill the table categories_match with data you would like
 
-# To Do
-# 1) connect sqlite3
-# 2) let the user enter searchword and category it should match show him the possible categories with numbers
-# 3) write into table
-# 4) close connection
-
 import sqlite3
 
 if __name__ == '__main__':
