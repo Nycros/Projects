@@ -93,6 +93,7 @@ def create_dataframe(filename, conn, cur):
                 asset_class_id = cur.fetchone()
 
             category_in_out_id = match_c.match_category(text, conn, cur)
+            # print(f"Debug Printout category_in_out_id in data_readout: {category_in_out_id}")   # printour for Debug
 
             currency = row['currency']
             cur.execute('''SELECT id FROM Currency_Supp WHERE name = ?''', (currency, ))

@@ -39,7 +39,7 @@ def match_category(text, conn, cur):
             cur.execute("SELECT category_in_out_id FROM Categories_Match WHERE name = ?", search_val)
             cat_id = cur.fetchone()[0]
             # correct_cat = search_val[0]
-            # print(f"Category: {search_val[0]}; ID: {id}")   # Printout for debug
+            # print(f"Category: {search_val[0]}; ID: {cat_id}")   # Printout for debug
             break
         else:
             cat_id = None

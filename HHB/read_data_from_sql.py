@@ -17,12 +17,39 @@ df = pd.DataFrame(sql_query, columns = ['id', 'hash', 'valutadate', 'amount', 't
                                         'account_id', 'asset_class_id', 'category_in_out_id', 'currency_id', 'int_or_ext_id', 'remarks'])
 # print (df)
 
+sql_query_cat = pd.read_sql_query ('''
+                               SELECT
+                               *
+                               FROM Category_In_Out_Supp
+                               ''', conn)
+
+df_cat = pd.DataFrame(sql_query_cat, columns = ['id', 'name', 'i_o_id'])
+# print (df_cat)
+
+
+final_df = pd.merge(df, df_cat,
+                       how='left', left_on='category_in_out_id', right_on='id')
+
+print(final_df.head())
+
 # Sum data based on column
-testsum = df.loc[df['category_in_out_id'] == 25, 'amount'].sum()
+testsum = final_df.loc[final_df['name'] == 25, 'amount'].sum()
 print(testsum)
 
-df.hist(column='amount', by='category_in_out_id')
-df.plot.hist(column=["amount"], by="category_in_out_id")
+# count values in each column
+# print(df.count())
+
+# Create data visualization
+""" What do i want t oanalyze?
+1) Income and Eypenses per month as Barchart
+2) Income and Expenses per category as Barchart
+3) Total account sum as linechart per month
+"""
+
+final_df.hist(column='amount', by='name')
+# df.plot.hist(column=["amount"], by="category_in_out_id")
+# df.plot(kind = 'scatter', x = 'valutadate', y = 'amount')
+
 
 plt.show()
 
