@@ -6,17 +6,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 conn = sqlite3.connect('HHB/Database/datadb.sqlite') 
-          
-sql_query = pd.read_sql_query ('''
+
+# Get transaction data and write into df  
+sql_query_trans = pd.read_sql_query ('''
                                SELECT
                                *
                                FROM Transactions
                                ''', conn)
 
-df = pd.DataFrame(sql_query, columns = ['id', 'hash', 'valutadate', 'amount', 'transaction_text_id',
+df_trans = pd.DataFrame(sql_query_trans, columns = ['id', 'hash', 'valutadate', 'amount', 'transaction_text_id',
                                         'account_id', 'asset_class_id', 'category_in_out_id', 'currency_id', 'int_or_ext_id', 'remarks'])
 # print (df)
 
+# Get category data and write into another df
 sql_query_cat = pd.read_sql_query ('''
                                SELECT
                                *
@@ -26,8 +28,8 @@ sql_query_cat = pd.read_sql_query ('''
 df_cat = pd.DataFrame(sql_query_cat, columns = ['id', 'name', 'i_o_id'])
 # print (df_cat)
 
-
-final_df = pd.merge(df, df_cat,
+# Combine into a final dataframe
+final_df = pd.merge(df_trans, df_cat,
                        how='left', left_on='category_in_out_id', right_on='id')
 
 print(final_df.head())
