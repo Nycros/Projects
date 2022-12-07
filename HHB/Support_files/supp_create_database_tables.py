@@ -36,57 +36,61 @@ if __name__ == "__main__":
 
     CREATE TABLE Banks_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE
+        name TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE Currency_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE
+        name TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE Asset_Class_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE
+        name TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE Internal_or_External_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        int_or_ext TEXT UNIQUE
+        int_or_ext TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE I_O_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        i_o TEXT UNIQUE
+        i_o TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE Category_In_Out_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE,
-        i_o_id INTEGER
+        name TEXT VARCHAR(255) UNIQUE,
+        i_o_id INTEGER,
+        FOREIGN KEY (i_o_id) REFERENCES I_O_Supp(id)
     );
 
     CREATE TABLE Categories_Match (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE,
-        category_in_out_id INTEGER
+        name TEXT VARCHAR(255) UNIQUE,
+        category_in_out_id INTEGER,
+        FOREIGN KEY (category_in_out_id) REFERENCES Category_In_Out_Supp(id)
     );
 
     CREATE TABLE Accounts_Supp (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        name TEXT UNIQUE,
-        account_number TEXT UNIQUE,
+        name TEXT VARCHAR(255) UNIQUE,
+        account_number TEXT VARCHAR(255) UNIQUE,
         bank_id INTEGER,
-        asset_class_id INTEGER
+        asset_class_id INTEGER,
+        FOREIGN KEY (bank_id) REFERENCES Banks_Supp(id),
+        FOREIGN KEY (asset_class_id) REFERENCES Asset_Class_Supp(id)
     );
 
     CREATE TABLE Transaction_Text (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        transaction_text TEXT UNIQUE
+        transaction_text TEXT VARCHAR(255) UNIQUE
     );
 
     CREATE TABLE Transactions (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        hash Text UNIQUE,
+        hash TEXT VARCHAR(255) UNIQUE,
         valutadate DATE,
         amount FLOAT,
         transaction_text_id INTEGER,
@@ -95,7 +99,13 @@ if __name__ == "__main__":
         category_in_out_id INTEGER,
         currency_id INTEGER,
         int_or_ext_id INTEGER,
-        remarks Text
+        remarks TEXT VARCHAR(255),
+        FOREIGN KEY (transaction_text_id) REFERENCES Transaction_Text(id),
+        FOREIGN KEY (account_id) REFERENCES Accounts_Supp(id),
+        FOREIGN KEY (asset_class_id) REFERENCES Asset_Class_Supp(id),
+        FOREIGN KEY (category_in_out_id) REFERENCES Category_In_Out_Supp(id),
+        FOREIGN KEY (currency_id) REFERENCES Currency_Supp(id),
+        FOREIGN KEY (int_or_ext_id) REFERENCES Internal_or_External_Supp(id)
     );
     ''')
 
