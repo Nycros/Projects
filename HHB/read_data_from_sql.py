@@ -5,30 +5,41 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-conn = sqlite3.connect('HHB/Database/datadb.sqlite') 
+conn = sqlite3.connect('HHB/Database/datadb.sqlite')
+cur = conn.cursor()
 
-# Get transaction data and write into df  
+# Create a dataframe for all the transactions to be stored
 sql_query_trans_all = pd.read_sql_query ('''
-                               SELECT
-                               *
-                               FROM Transactions
-                               ''', conn)
+                                SELECT
+                                *
+                                FROM Transactions
+                                ''', conn)
 
-# Get transactions groupt by category
+# Create a dataframe for the transactions grouped  by catagory
 sql_query_trans_cat = pd.read_sql_query ('''
-                               SELECT
-                               category_in_out_id,
-                               SUM (amount)
-                               FROM Transactions
-                               GROUP BY category_in_out_id
-                               ''', conn)
+                                SELECT
+                                category_in_out_id,
+                                SUM (amount)
+                                FROM Transactions
+                                GROUP BY category_in_out_id
+                                ''', conn)
 
-df_trans_all = pd.DataFrame(sql_query_trans_all, columns = ['id', 'hash', 'valutadate', 'amount', 'transaction_text_id',
-                                        'account_id', 'asset_class_id', 'category_in_out_id', 'currency_id', 'int_or_ext_id', 'remarks'])
+print(f"------------->> DEBUG Output of sql_query_trans_cat <<---------------------\n{sql_query_trans_cat}")
 
-df_trans_cat = pd.DataFrame(sql_query_trans_cat, columns = ['amount', 'category_in_out_id'])
+# Create a dataframe for the transactions grouped  by month
+sql_query_trans_month = pd.read_sql_query ('''
+                                SELECT
+                                STRFTIME("%m-%Y", valutadate) AS date,
+                                SUM (amount)
+                                FROM Transactions
+                                GROUP BY STRFTIME("%m-%Y", valutadate)
+                                ''', conn)
 
-print(df_trans_cat)
+print(f"------------->> DEBUG Output of sql_query_trans_month <<---------------------\n{sql_query_trans_month}")
+
+# Create a dataframe  with a cumulative sum per month
+df_cum_amount_month = sql_query_trans_month
+df_cum_amount_month['Cumulative amount'] = sql_query_trans_month['SUM (amount)'].cumsum()
 
 # Get category data and write into another df
 sql_query_cat = pd.read_sql_query ('''
@@ -37,35 +48,37 @@ sql_query_cat = pd.read_sql_query ('''
                                FROM Category_In_Out_Supp
                                ''', conn)
 
-df_cat = pd.DataFrame(sql_query_cat, columns = ['id', 'name'])
-# print (df_cat)
-
-# Combine into a final dataframe
-final_df = pd.merge(df_trans_cat, df_cat,
+# Combine transactions data and catagory data into a final dataframe to access the catagory names
+df_trans_cat = pd.merge(sql_query_trans_cat, sql_query_cat,
                        how='left', left_on='category_in_out_id', right_on='id')
 
-print(final_df.head())
+print(f"------------->> DEBUG Output of final dataframe <<---------------------\n{df_trans_cat.head()}")
 
 # Sum data based on column
-testsum = final_df.loc[final_df['name'] == 25, 'amount'].sum()
-print(testsum)
+testsum = df_trans_cat.loc[df_trans_cat['name'] == 25, 'SUM (amount)'].sum()
+print(f"Testsum: {testsum}")
 
 # count values in each column
 # print(df.count())
 
 # Create data visualization
-""" What do i want t oanalyze?
+""" What do i want to analyze?
 1) Income and Eypenses per month as Barchart
 2) Income and Expenses per category as Barchart
 3) Total account sum as linechart per month
 """
-# Different Plots 
-# final_df.hist(column='amount', by='name')
-# df.plot.hist(column=["amount"], by="category_in_out_id")
-# df.plot(kind = 'scatter', x = 'valutadate', y = 'amount')
 
-final_df.plot(kind = 'bar', x = 'name', y = 'amount')
+# Plot total amount per catagory as bar chart
+# df_trans_cat.plot(kind = 'barh', x = 'name', y = 'SUM (amount)')
+plot = df_trans_cat.plot(kind = 'barh', x = 'name', y = 'SUM (amount)')
+plot.bar_label(plot.containers[0], label_type='center')
+plt.title("Total amount per category")
 
+# Plot total amount per month as bar chart
+sql_query_trans_month.plot(kind = 'barh', x = 'date', y = 'SUM (amount)')
+
+# Plot cumulative amount per month as line chart
+df_cum_amount_month.plot(kind = 'line', x = 'date', y = 'Cumulative amount')
 
 plt.show()
 
