@@ -55,18 +55,19 @@ df_trans_cat = pd.merge(sql_query_trans_cat, sql_query_cat,
 print(f"------------->> DEBUG Output of final dataframe <<---------------------\n{df_trans_cat.head()}")
 
 # Sum data based on column
-testsum = df_trans_cat.loc[df_trans_cat['name'] == 25, 'SUM (amount)'].sum()
+testsum = df_trans_cat.loc[df_trans_cat['name'] == "Tanken", 'SUM (amount)'].sum()
 print(f"Testsum: {testsum}")
 
 # count values in each column
 # print(df.count())
 
+
+
+
 # Create data visualization
-""" What do i want to analyze?
-1) Income and Eypenses per month as Barchart
-2) Income and Expenses per category as Barchart
-3) Total account sum as linechart per month
+
 """
+# Creat single plots of data
 
 # Plot total amount per catagory as bar chart
 # df_trans_cat.plot(kind = 'barh', x = 'name', y = 'SUM (amount)')
@@ -80,7 +81,30 @@ sql_query_trans_month.plot(kind = 'barh', x = 'date', y = 'SUM (amount)')
 # Plot cumulative amount per month as line chart
 df_cum_amount_month.plot(kind = 'line', x = 'date', y = 'Cumulative amount')
 
-plt.show()
-
 # how to plot data: https://www.w3schools.com/python/pandas/pandas_plotting.asp
 # https://data36.com/plot-histogram-python-pandas/
+"""
+
+# Show all plots in on window
+
+#define subplot layout
+# figure, axes = plt.subplots(2, 2, figsize=(20, 15)) # Create Subplots with window size 20 by 15
+
+figure, axes = plt.subplots(2, 2)
+
+figure.canvas.manager.full_screen_toggle() # toggle fullscreen mode
+
+# add DataFrames to subplots
+plot1 = df_trans_cat.plot(ax=axes[0,0], kind = 'barh', x = 'name', y = 'SUM (amount)')              # Plot total amount per catagory as bar chart
+plot2 = sql_query_trans_month.plot(ax=axes[0,1], kind = 'barh', x = 'date', y = 'SUM (amount)')     # Plot total amount per month as bar chart
+plot3 = df_cum_amount_month.plot(ax=axes[1,0], kind = 'line', x = 'date', y = 'Cumulative amount')  # Plot cumulative amount per month as line chart
+
+# add data labels to subplots
+plot1.bar_label(plot1.containers[0], label_type='center')
+
+# add title to subplots
+plot1.title.set_text('Total amount per category')
+plot2.title.set_text('Total amount per month')
+plot3.title.set_text('Cumulative amount per month')
+
+plt.show()
