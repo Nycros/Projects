@@ -85,7 +85,13 @@ df_cum_amount_month.plot(kind = 'line', x = 'date', y = 'Cumulative amount')
 # https://data36.com/plot-histogram-python-pandas/
 """
 
-# Show all plots in on window
+# Show all plots in one window
+"""
+https://www.statology.org/pandas-subplots/
+https://www.geeksforgeeks.org/change-figure-size-in-pandas-python/
+https://stackoverflow.com/questions/42354515/how-to-display-a-plot-in-fullscreen
+https://stackoverflow.com/questions/25239933/how-to-add-a-title-to-each-subplot
+"""
 
 #define subplot layout
 # figure, axes = plt.subplots(2, 2, figsize=(20, 15)) # Create Subplots with window size 20 by 15
