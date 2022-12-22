@@ -28,14 +28,53 @@ And in the long run, my excel file should be replaced completely.
 
 ### Structure of the project
 The project is split into several folders and files.  
-- The folder __Bank_statement__ contains all the csv files of my bank accounts
-- The folder __Database__ contains exactly this, the SQL-database
+- The folder __Bank_statement__ contains all the csv files of my bank accounts here i have nothing coded, it is just the files i downloaded
+- The folder __Database__ contains exactly this, the SQL-database for creation of the database see the files in the __Support_files__ forlder
 - __Support_files__ holds all the files for creating the SQL tables and for filling them with base data
 - The overall folder contains the main file and files for calculating and plotting graphs
 
 In the next section, i will explain more in detail, what each file is for.
 
 ### Explaination of each file
+The first four files, i will explain, are supporting files.  
+What i mean with that is, they not need to be run every time.  
+They create database tables or fill them with standard data.
+#### supp_create_database_tables.py
+This file will create all the database tables initially.  
+I created in total ten different tabels to store all the data for my budget overview.  
+In the following i list all the tabels and what they are used for.  
+- TABLE Banks_Supp: list all the banks by name
+- TABLE Currency_Supp: list different currencies
+- TABLE Asset_Class_Supp: lists all the asset classes
+- TABLE Internal_or_External_Supp: a table if the expense is internal (to an account from Banks) or if it is an external to someone elses expense
+- TABLE I_O_Supp: a list if the amount is in or outgoing
+- TABLE Category_In_Out_Supp: lists all the possible categories
+- TABLE Accounts_Supp: lists all the accounts
+- TABLE Transaction_Text: lists all the transaction texts
+- TABLE Transactions: list all transactions
+- TABLE Categories_Match: list all searchwords to match the category
+#### supp_del_none_supp_tables.py
+I use this file, to lets say reset the csv readout.  
+So if i start the main program and face any problems later on, i need to reset also the database tables.  
+Therfore i created this file, so only the data in the tables which will be filled by the data readout of the csv files, will be deleted.  
+In that way, i do not have to start from scratch again.
+#### supp_fill_cat_match.py
+If this code is run, it let you enter a category name and also a search word to match both in the table "Categories_Match".  
+This is needed, to match the transaction text from the account statements to a category.  
+For example, lets say in the Transaction text it says something like "grocery store" and i would like to match it to the category "food and consumer goods".  
+In this case, i start the program, i get asked to enter a Searchword. I that case, the searhword would be "grocery store".  
+I then get a list of all pre defined catgories and i can choose to which category i would like to match the searchword.  
+The searchword and the category index number, will then be written into the table "Categories_Match" in the database.
+#### supp_fill_database_tables.py
+This file is going to fill all the non changeable data in some tables.  
+Like BAnk names, Curencies, catagories and some other.  
+I created this file for the case, if i loose the tables somewhere in the future.  
+In that case, i can run this program and i do not have to enter all the data manually again.
+#### 00_main.py
+#### match_catagory.py
+#### write_database.py
+#### data_readout.py
+#### 01_plot_data.py
 
 TRied different plot styles
 Experimented with different plots

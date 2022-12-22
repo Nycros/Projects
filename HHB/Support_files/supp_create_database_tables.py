@@ -5,13 +5,13 @@ import sqlite3
 if __name__ == "__main__":
     # Explaination on tables:
     """
-    TABLE Banks: list all the banks by name
-    TABLE Currency: list differen currencies by name
-    TABLE Asset_Class:lists all the asset classes by Name
-    TABLE Internal_or_External: a table if the expense is internal (to a account from Banks) or if it is an external to someone elses expense
-    TABLE I_O: a list if the amoutn is in or otgoing
-    TABLE Category_In_Out: lists all the possible categories
-    TABLE Accounts: lists all the accounts
+    TABLE Banks_Supp: list all the banks by name
+    TABLE Currency_Supp: list differen currencies by name
+    TABLE Asset_Class_Supp:lists all the asset classes by Name
+    TABLE Internal_or_External_Supp: a table if the expense is internal (to a account from Banks) or if it is an external to someone elses expense
+    TABLE I_O_Supp: a list if the amoutn is in or otgoing
+    TABLE Category_In_Out_Supp: lists all the possible categories
+    TABLE Accounts_Supp: lists all the accounts
     TABLE Transaction_Text: lists all the transaction texts
     TABLE Transactions: list all transactions
     TABLE Categories_Match: list all searchwords to match the category
