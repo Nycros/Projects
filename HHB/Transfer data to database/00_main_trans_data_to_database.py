@@ -3,19 +3,6 @@ import sqlite3
 
 import write_database as wd
 
-"""
-# To Do
-1) finish data readout
-2) Done: finish supp_fill_database_tables.py
-3) Done: create and finish delete none supporting database
-4) Done: finish fill catagories match program
-4) Done: finish write database
-5) Done: Coplete write database to update the database and not append everything
-5) Create basic bar chart per category
-    create code to read data into dataframe
-    analyse it
-    create bar chart for visualization
-"""
 # Main Function
 def main():
     # Create connection to database and tables

@@ -5,21 +5,6 @@ import hashlib
 import match_category as match_c
 import sqlite3
 
-"""
-# needed steps:
-
-7) Is now specialiesed on Bawag files. need to test it also for other banks. --> Done for Bawag and Bank 99
-    create a function for each bank ( Bawag, Flatex, bank99, Raika, N26)
-        What is different form ing to Bawag
-    the file is named after the account num. look this account num in the database and get the bank name and start the fucniton based on this.
-    write data of bank into a pandas dataframe and then call a function, that writes this dataframe into the database, so we do not need to copy the database write multiple times
-
-    Maybe the best approach is, to make all csv files the same and then send to a function to process the data.
-
-12) Crate a early break, if the data is already in the database best before category match!!!!
-
-"""
-
 # function for createing a hashvalue
 def hash_func(item1, item2, item3, item4):
     hash_string = str(item1) + str(item2) + str(item3) + str(item4)
