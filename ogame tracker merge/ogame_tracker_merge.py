@@ -57,6 +57,7 @@ with open('ogame tracker merge/OGame-Tracker-Export_2023-01-26_08-09-25.json', '
     # print(exped_2)
     # print(debris_2)
     # print(life_forms_2)
+    # test
 
 
 # find differences
