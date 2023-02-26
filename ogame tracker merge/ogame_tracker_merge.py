@@ -2,10 +2,21 @@
 # prüfen, welche daten in der längeren nicht vorkommen
 # beide dateiene zusammen führen ohne duplikate
 
+# Export data from ozone
+# write data from the 2 json exports from libra into the ozone export
+
+# type: is just main data and should not be changed
+# servers is just main data and should not be changed
+
+
 import json
+import csv
+
+baseFile = 'ogame tracker merge/Base_OGame-Tracker-Export_2023-02-25_16-17-57.json'
+extraFile = 'ogame tracker merge/OGame-Tracker-Export_2023-02-24_11-25-01.json'
 
 # get all the data from first file
-with open('ogame tracker merge/OGame-Tracker-Export_2023-01-26_08-00-43.json', 'r') as fhandle:
+with open(baseFile, 'r') as fhandle:
     data = json.loads(fhandle.read())
 
     # get data reports
@@ -30,9 +41,12 @@ with open('ogame tracker merge/OGame-Tracker-Export_2023-01-26_08-00-43.json', '
     # print(exped)
     # print(debris)
     # print(life_forms)
-    
+   
+
+
+
 # get all the data from second file
-with open('ogame tracker merge/OGame-Tracker-Export_2023-01-26_08-09-25.json', 'r') as fhandle:
+with open(extraFile, 'r') as fhandle:
     data_2 = json.loads(fhandle.read())
 
         # get data reports
@@ -61,10 +75,62 @@ with open('ogame tracker merge/OGame-Tracker-Export_2023-01-26_08-09-25.json', '
 
 
 # find differences
+count_comb_base = 0
 for each in combat_rep:
-    if each in combat_rep_2:
-        print(each)
+    count_comb_base += 1
 
-for each in exped:
-    if each in exped_2:
-        print(each)
+count_comb_extra = 0
+for each in combat_rep_2:
+    count_comb_extra += 1
+
+ 
+
+# write all different combat data into a new file
+# outComb = []
+# count = 0
+# with open("ogame tracker merge/sample.json", "w") as outfile:
+#     for each in data_2['accounts'][0]['combatReports']:
+#         if each['id'] not in combat_rep:
+#             outComb.append(each)
+#             count += 1
+#     json.dump(outComb, outfile)
+
+# print(f"{count} id´s read. {count_comb_base} in base file and {count_comb_extra} in extra file")
+
+processedData = 0
+with open("ogame tracker merge/new.json", "w") as newfile:
+    newData = data.copy()
+    outComb = []
+    outExped = []
+    outDeb = []
+    outLife = []
+
+    # Get combat data
+    for each in data_2['accounts'][0]['combatReports']:
+        if each['id'] not in combat_rep:
+            processedData += 1
+            outComb.append(each)
+    # Get expedition data
+    for each in data_2['accounts'][0]['expeditions']:
+        if each['id'] not in exped:
+            processedData += 1
+            outExped.append(each)
+    # Get debris data
+    for each in data_2['accounts'][0]['debrisFieldReports']:
+        if each['id'] not in debris:
+            processedData += 1
+            outDeb.append(each)
+    # Get liffefroms data
+    for each in data_2['accounts'][0]['lifeformDiscoveries']:
+        if each['id'] not in life_forms:
+            processedData += 1
+            outLife.append(each)
+
+    newData['accounts'][0]['combatReports'].extend(outComb)
+    newData['accounts'][0]['expeditions'].extend(outDeb)
+    newData['accounts'][0]['debrisFieldReports'].extend(outExped)
+    newData['accounts'][0]['lifeformDiscoveries'].extend(outExped)
+
+    json.dump(newData, newfile)
+
+print(f"{processedData} data was processed")
