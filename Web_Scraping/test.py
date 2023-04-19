@@ -1,0 +1,3 @@
+lst = ["Elias", "Lukas", "Felix", "Leon", "Noah", "Paul", "Matteo", "Jakob", "Jonas", "Emma", "Emilia", "Hannah", "Anna", "Lea", "Mia", "Marie", "Lena", "Ella", "Hans", "Michael", "Erika", "Martin", "Julia", "Erwin", "Josef", "Sebastian", "Manuela", "Jasmin", "Stefan", "Carina", "Tamara", "Regina", "Fabian", "Harald", "Kevin", "Sarah", "Jan", "Mathias", "Ernst", "Peter", "Roland", "Friedrich", "Petra", "Alois", "Johanna", "Fabian"]
+
+print(sorted(lst))
